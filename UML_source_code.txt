@@ -10,7 +10,7 @@ class Product{
 class TooManyProductsFoundError{}
 
 interface Server <<interface>>{
-+{abstract}Serwer(lst:List[Product])
++{abstract}Server(lst:list[Product])
 +product: Container[Products]
 +{abstract}n_max_returned_entries(): int
 +{abstract}get_entries(n_letters): list[Product]
@@ -32,5 +32,5 @@ Server*--Product
 Server<|.. ListServer
 Server<|.. MapServer
 Server ..> TooManyProductsFoundError : << uses >>
-Client o-- Server
+Client "*" o-- "1"Server
 @enduml
