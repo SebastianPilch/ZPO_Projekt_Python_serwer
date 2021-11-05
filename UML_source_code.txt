@@ -9,8 +9,10 @@ class Product{
 }
 class TooManyProductsFoundError{}
 interface Serwer <<interface>>{
-+Serwer(lst:List[Product])
++{abstract}Serwer(lst:List[Product])
 +product: Container[Products]
++{abstract}n_max_returned_entries(): int
++{abstract}get_entries(n_letters): List[Product]
 }
 class ListServer{
 +ListServer()
