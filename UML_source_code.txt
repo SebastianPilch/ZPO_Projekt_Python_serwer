@@ -11,16 +11,23 @@ class TooManyProductsFoundError{}
 
 interface Server <<interface>>{
 +{abstract}Server(lst:list[Product])
-+product: Container[Products]
 +{abstract}n_max_returned_entries(): int
 +{abstract}get_entries(n_letters): list[Product]
 }
 
 class ListServer{
-+ListServer()
++ListServer(lst:list[Product])
++product: list[Products]
++n_max_returned_entries(): int
++get_entries(n_letters): list[Product]
 }
 
-class MapServer{}
+class MapServer{
++MapServer(lst:list[Product])
++product: dict[Products]
++n_max_returned_entries(): int
++get_entries(n_letters): list[Product]
+}
 
 class Client{
 +Client()
@@ -28,7 +35,8 @@ class Client{
 +get_total_price(n_letters):Optional(float)
 }
 
-Server*--Product
+MapServer "1"*--"*"Product
+ListServer "1"*--"*"Product
 Server<|.. ListServer
 Server<|.. MapServer
 Server ..> TooManyProductsFoundError : << uses >>
