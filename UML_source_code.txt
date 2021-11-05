@@ -8,23 +8,29 @@ class Product{
 +~Product()
 }
 class TooManyProductsFoundError{}
-interface Serwer <<interface>>{
+
+interface Server <<interface>>{
 +{abstract}Serwer(lst:List[Product])
 +product: Container[Products]
 +{abstract}n_max_returned_entries(): int
-+{abstract}get_entries(n_letters): List[Product]
++{abstract}get_entries(n_letters): list[Product]
 }
+
 class ListServer{
 +ListServer()
 }
+
 class MapServer{}
+
 class Client{
 +Client()
 +~Client()
 +get_total_price(n_letters):Optional(float)
 }
-Serwer*--Product
-Serwer<|..ListSerwer
-Serwer<|..MapSerwer
-Serwer ..> TooManyProductsFoundError : << uses >>
+
+Server*--Product
+Server<|.. ListServer
+Server<|.. MapServer
+Server ..> TooManyProductsFoundError : << uses >>
+Client o-- Server
 @enduml
