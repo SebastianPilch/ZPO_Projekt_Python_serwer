@@ -23,4 +23,8 @@ class Client{
 +~Client()
 +get_total_price(n_letters):Optional(float)
 }
+Serwer*--Product
+Serwer<|..ListSerwer
+Serwer<|..MapSerwer
+Serwer ..> TooManyProductsFoundError : << uses >>
 @enduml
