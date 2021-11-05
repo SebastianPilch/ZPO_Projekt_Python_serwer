@@ -7,9 +7,10 @@ class Product{
 +__hash__(): hash
 +~Product()
 }
-class TooManyProductsFoundError{}
+class TooManyProductsFoundError <<exception>>{}
 
 interface Server <<interface>>{
++{static} n_max_returned_entries: int
 +{abstract}Server(lst:list[Product])
 +{abstract}n_max_returned_entries(): int
 +{abstract}get_entries(n_letters): list[Product]
@@ -18,14 +19,12 @@ interface Server <<interface>>{
 class ListServer{
 +ListServer(lst:list[Product])
 +product: list[Products]
-+n_max_returned_entries(): int
 +get_entries(n_letters): list[Product]
 }
 
 class MapServer{
 +MapServer(lst:list[Product])
 +product: dict[Products]
-+n_max_returned_entries(): int
 +get_entries(n_letters): list[Product]
 }
 
@@ -39,6 +38,6 @@ MapServer "1"*--"*"Product
 ListServer "1"*--"*"Product
 Server<|.. ListServer
 Server<|.. MapServer
-Server ..> TooManyProductsFoundError : << uses >>
+Server ..> TooManyProductsFoundError : << throws >>
 Client "*" o-- "1"Server
 @enduml
