@@ -1,0 +1,10 @@
+@startuml
+class Product{
++nazwa: string
++cena: float
+}
+class TooManyProductsFoundError{}
+class ListServer{}
+class MapServer{}
+class Client{}
+@enduml
