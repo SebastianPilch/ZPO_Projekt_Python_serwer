@@ -1,10 +1,24 @@
 @startuml
 class Product{
++Product()
 +nazwa: string
 +cena: float
++__eq__(other: Product): bool
++__hash__(): hash
++~Product()
 }
 class TooManyProductsFoundError{}
-class ListServer{}
+interface Serwer <<interface>>{
++Serwer(lst:List[Product])
++product: Container[Products]
+}
+class ListServer{
++ListServer()
+}
 class MapServer{}
-class Client{}
+class Client{
++Client()
++~Client()
++get_total_price(n_letters):Optional(float)
+}
 @enduml
