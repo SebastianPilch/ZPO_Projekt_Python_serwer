@@ -1,8 +1,8 @@
 @startuml
 class Product{
 +Product()
-+nazwa: string
-+cena: float
++name: string
++price: float
 +__eq__(other: Product): bool
 +__hash__(): hash
 +~Product()
@@ -12,7 +12,6 @@ class TooManyProductsFoundError <<exception>>{}
 interface Server <<interface>>{
 +{static} n_max_returned_entries: int
 +{abstract}Server(lst:list[Product])
-+{abstract}n_max_returned_entries(): int
 +{abstract}get_entries(n_letters): list[Product]
 }
 
@@ -29,6 +28,7 @@ class MapServer{
 }
 
 class Client{
++server: Server
 +Client()
 +~Client()
 +get_total_price(n_letters):Optional(float)
