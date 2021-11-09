@@ -14,8 +14,10 @@ class Product:
         return hash((self.name, self.price))
 
 
-class TooManyProductsFoundError:
+class TooManyProductsFoundError(Exception):
     # Reprezentuje wyjątek związany ze znalezieniem zbyt dużej liczby produktów.
+    def __init__(self,msg):
+        super().__init__(msg)
     pass
 
 
