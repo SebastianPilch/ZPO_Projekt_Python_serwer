@@ -14,6 +14,9 @@ class Product:
         self.name = name_
         self.price = price_
 
+        form = "[a-zA-Z]+\d+"
+        if re.fullmatch(form, self.name) is None:
+            raise ValueError
     pass
 
     def __eq__(self, other):
@@ -61,9 +64,10 @@ class ListServer(Server):
         for i in self.product:
             if re.fullmatch(form, i.name) is not None:
                 to_return.append(i)
+            to_return = list(set(to_return))
             if len(to_return) > super().n_max_returned_entries:
                 raise TooManyProductsFoundError
-        return to_return
+        return sorted(to_return, key=lambda x: x.price)
 
     pass
 
@@ -79,8 +83,11 @@ class MapServer(Server):
         for i in self.product.keys():
             if re.fullmatch(form, i) is not None:
                 to_return.append(self.product[i])
+            to_return = list(set(to_return))
             if len(to_return) > super().n_max_returned_entries:
                 raise TooManyProductsFoundError
+        return sorted(to_return, key=lambda x: x.price)
+
 
 class Client:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą obiekt reprezentujący serwer
@@ -92,11 +99,12 @@ class Client:
 
         try:
             Product_List = self.server.get_entries(n_letters)
+            if len(Product_List) == 0:
+                return None
             sum = 0
             for i in Product_List:
                 sum += i.price
+            return sum
 
-            if len(Product_List) == 0:
-                return None
         except:
             return None
