@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from abc import abstractmethod, ABC
+from copy import copy
 from typing import Optional, List
 import re
 
@@ -10,16 +11,21 @@ class Product:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą argumenty wyrażające nazwę produktu (typu str)
     #  i jego cenę (typu float) -- w takiej kolejności -- i ustawiającą atrybuty `name` (typu str) oraz `price` (typu
     #  float)
-    def __init__(self, name_: str, price_: float):
-        self.name = name_
-        self.price = price_
+    def __init__(self, name_: str, price_: float) -> None:
+        try:
+            self.name : str = name_
+            if(float(price_)<0):
+                raise ValueError
+            self.price : float = float(price_)
 
-        form = "[a-zA-Z]+\d+"
-        if re.fullmatch(form, self.name) is None:
+            form = "[a-zA-Z]+\d+"
+            if re.fullmatch(form, self.name) is None:
+                raise ValueError
+        except:
             raise ValueError
-    pass
+    
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if (self.price == other.price) and (self.name == other.name):
             return True
         else:
@@ -28,13 +34,15 @@ class Product:
     def __hash__(self):
         return hash((self.name, self.price))
 
-
-class TooManyProductsFoundError(Exception):
-    # Reprezentuje wyjątek związany ze znalezieniem zbyt dużej liczby produktów.
-    def __init__(self, msg):
+class ServerError(Exception):
+    # Reprezentuje klasę macierzystą wyjątku związanego ze znalezieniem zbyt dużej liczby produktów.
+    def __init__(self, msg : str):
         super().__init__(msg)
 
-    pass
+class TooManyProductsFoundError(ServerError):
+    # Reprezentuje wyjątek związany ze znalezieniem zbyt dużej liczby produktów.
+    def __init__(self, msg : str):
+        super().__init__(msg)
 
 
 # FIXME: Każada z poniższych klas serwerów powinna posiadać:
@@ -46,52 +54,61 @@ class TooManyProductsFoundError(Exception):
 #  zwracającą listę produktów spełniających kryterium wyszukiwania
 
 class Server(ABC):
-    n_max_returned_entries = 3
-
+    n_max_returned_entries : int = 3
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__()
+    
     @abstractmethod
-    def get_entries(self, n_letters=1) -> List[Product]:
-        pass
+    def get_entries(self, n_letters : int =1) -> List[Product]:
+        raise NotImplementedError
 
 
 class ListServer(Server):
+
     def __init__(self, lst: List[Product]):
+        super().__init__()
+        lst = list(set(lst))
         self.product = lst
 
-    def get_entries(self, n_letters=1) -> List[Product]:
-        form = "[a-zA-Z]" * n_letters
-        form += "\d{2,3}"
+    def get_entries(self, n_letters : int=1) -> List[Product]:
+        if type(n_letters)!=int or n_letters<=0:
+            raise ValueError
+        form = "[a-zA-Z]" * n_letters + "\d{2,3}"
         to_return = []
         for i in self.product:
             if re.fullmatch(form, i.name) is not None:
                 to_return.append(i)
-            to_return = list(set(to_return))
             if len(to_return) > super().n_max_returned_entries:
-                raise TooManyProductsFoundError
+                raise TooManyProductsFoundError("too many found")
         return sorted(to_return, key=lambda x: x.price)
-
-    pass
+    
 
 
 class MapServer(Server):
     def __init__(self, lst: List[Product]):
-        self.product = {i.name: i for i in lst}
-
-    def get_entries(self, n_letters=1):
-        form = "[a-zA-Z]" * n_letters
-        form += "\d{2,3}"
+        super().__init__()
+        lst = list(set(lst))
+        self.product = {i.name: [] for i in lst}
+        for i in lst:
+            self.product[i.name].append(i)
+        super(MapServer, self).__init__()
+    
+    def get_entries(self, n_letters : int=1):
+        if type(n_letters)!=int or n_letters<=0:
+            raise ValueError
+        form = "[a-zA-Z]" * n_letters +"\d{2,3}"
         to_return = []
         for i in self.product.keys():
             if re.fullmatch(form, i) is not None:
-                to_return.append(self.product[i])
-            to_return = list(set(to_return))
+                to_return.extend(self.product[i])
             if len(to_return) > super().n_max_returned_entries:
-                raise TooManyProductsFoundError
+                raise TooManyProductsFoundError("too many found")
         return sorted(to_return, key=lambda x: x.price)
 
 
 class Client:
     # FIXME: klasa powinna posiadać metodę inicjalizacyjną przyjmującą obiekt reprezentujący serwer
-    def __init__(self, server_: ListServer):
+    def __init__(self, server_: Server):
         self.server = server_
         pass
 
