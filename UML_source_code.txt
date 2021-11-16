@@ -5,11 +5,10 @@ class Product{
 +price: float
 +__eq__(other: Product): bool
 +__hash__(): hash
-+~Product()
 }
 class TooManyProductsFoundError <<exception>>{}
-
-interface Server <<interface>>{
+class ServerError<<exception>>{}
+abstract class Server {
 +{static} n_max_returned_entries: int
 +{abstract}Server(lst:list[Product])
 +{abstract}get_entries(n_letters): list[Product]
@@ -17,27 +16,27 @@ interface Server <<interface>>{
 
 class ListServer{
 +ListServer(lst:list[Product])
-+product: list[Products]
++product: list[Product]
 +get_entries(n_letters): list[Product]
 }
 
 class MapServer{
 +MapServer(lst:list[Product])
-+product: dict[Products]
++product: dict[Product]
 +get_entries(n_letters): list[Product]
 }
 
 class Client{
 +server: Server
 +Client()
-+~Client()
 +get_total_price(n_letters):Optional(float)
 }
 
 MapServer "1"*--"*"Product
 ListServer "1"*--"*"Product
-Server<|.. ListServer
-Server<|.. MapServer
+Server<|-- ListServer
+Server<|-- MapServer
 Server ..> TooManyProductsFoundError : << throws >>
 Client "*" o-- "1"Server
+TooManyProductsFoundError--|>ServerError
 @enduml

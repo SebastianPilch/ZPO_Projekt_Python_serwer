@@ -90,6 +90,13 @@ class ClientTest(unittest.TestCase):
             client = Client(server)
             self.assertEqual(None,client.get_total_price(2))
 
+    def test_empty_server(self):
+        products = []
+        for server_type in server_types:
+            server = server_type(products)
+            client = Client(server)
+            self.assertEqual(None, client.get_total_price(2))
+
     
 
 if __name__ == '__main__':

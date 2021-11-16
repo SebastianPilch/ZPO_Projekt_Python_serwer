@@ -13,17 +13,16 @@ class Product:
     #  float)
     def __init__(self, name_: str, price_: float) -> None:
         try:
-            self.name : str = name_
-            if(float(price_)<0):
+            self.name: str = name_
+            if float(price_) < 0:
                 raise ValueError
-            self.price : float = float(price_)
+            self.price: float = float(price_)
 
             form = "[a-zA-Z]+\d+"
             if re.fullmatch(form, self.name) is None:
                 raise ValueError
         except:
             raise ValueError
-    
 
     def __eq__(self, other) -> bool:
         if (self.price == other.price) and (self.name == other.name):
@@ -34,14 +33,16 @@ class Product:
     def __hash__(self):
         return hash((self.name, self.price))
 
+
 class ServerError(Exception):
     # Reprezentuje klasę macierzystą wyjątku związanego ze znalezieniem zbyt dużej liczby produktów.
-    def __init__(self, msg : str):
+    def __init__(self, msg: str):
         super().__init__(msg)
+
 
 class TooManyProductsFoundError(ServerError):
     # Reprezentuje wyjątek związany ze znalezieniem zbyt dużej liczby produktów.
-    def __init__(self, msg : str):
+    def __init__(self, msg: str):
         super().__init__(msg)
 
 
@@ -54,12 +55,13 @@ class TooManyProductsFoundError(ServerError):
 #  zwracającą listę produktów spełniających kryterium wyszukiwania
 
 class Server(ABC):
-    n_max_returned_entries : int = 3
+    n_max_returned_entries: int = 3
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
-    
+
     @abstractmethod
-    def get_entries(self, n_letters : int =1) -> List[Product]:
+    def get_entries(self, n_letters: int = 1) -> List[Product]:
         raise NotImplementedError
 
 
@@ -70,8 +72,8 @@ class ListServer(Server):
         lst = list(set(lst))
         self.product = lst
 
-    def get_entries(self, n_letters : int=1) -> List[Product]:
-        if type(n_letters)!=int or n_letters<=0:
+    def get_entries(self, n_letters: int = 1) -> List[Product]:
+        if type(n_letters) != int or n_letters <= 0:
             raise ValueError
         form = "[a-zA-Z]" * n_letters + "\d{2,3}"
         to_return = []
@@ -81,7 +83,6 @@ class ListServer(Server):
             if len(to_return) > super().n_max_returned_entries:
                 raise TooManyProductsFoundError("too many found")
         return sorted(to_return, key=lambda x: x.price)
-    
 
 
 class MapServer(Server):
@@ -92,11 +93,11 @@ class MapServer(Server):
         for i in lst:
             self.product[i.name].append(i)
         super(MapServer, self).__init__()
-    
-    def get_entries(self, n_letters : int=1):
-        if type(n_letters)!=int or n_letters<=0:
+
+    def get_entries(self, n_letters: int = 1):
+        if type(n_letters) != int or n_letters <= 0:
             raise ValueError
-        form = "[a-zA-Z]" * n_letters +"\d{2,3}"
+        form = "[a-zA-Z]" * n_letters + "\d{2,3}"
         to_return = []
         for i in self.product.keys():
             if re.fullmatch(form, i) is not None:
