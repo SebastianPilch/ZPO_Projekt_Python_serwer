@@ -70,14 +70,14 @@ class ListServer(Server):
     def __init__(self, lst: List[Product]):
         super().__init__()
         lst = list(set(lst))
-        self.product = lst
+        self.products = lst
 
     def get_entries(self, n_letters: int = 1) -> List[Product]:
         if type(n_letters) != int or n_letters <= 0:
             raise ValueError
         form = "[a-zA-Z]" * n_letters + "\d{2,3}"
         to_return = []
-        for i in self.product:
+        for i in self.products:
             if re.fullmatch(form, i.name) is not None:
                 to_return.append(i)
             if len(to_return) > super().n_max_returned_entries:
@@ -89,9 +89,9 @@ class MapServer(Server):
     def __init__(self, lst: List[Product]):
         super().__init__()
         lst = list(set(lst))
-        self.product = {i.name: [] for i in lst}
+        self.products = {i.name: [] for i in lst}
         for i in lst:
-            self.product[i.name].append(i)
+            self.products[i.name].append(i)
         super(MapServer, self).__init__()
 
     def get_entries(self, n_letters: int = 1):
@@ -99,9 +99,9 @@ class MapServer(Server):
             raise ValueError
         form = "[a-zA-Z]" * n_letters + "\d{2,3}"
         to_return = []
-        for i in self.product.keys():
+        for i in self.products.keys():
             if re.fullmatch(form, i) is not None:
-                to_return.extend(self.product[i])
+                to_return.extend(self.products[i])
             if len(to_return) > super().n_max_returned_entries:
                 raise TooManyProductsFoundError("too many found")
         return sorted(to_return, key=lambda x: x.price)
