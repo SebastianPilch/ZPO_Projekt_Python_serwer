@@ -16,13 +16,13 @@ abstract class Server {
 
 class ListServer{
 +ListServer(lst:list[Product])
-+product: list[Product]
++products: list[Product]
 +get_entries(n_letters): list[Product]
 }
 
 class MapServer{
 +MapServer(lst:list[Product])
-+product: dict[Product]
++products: dict[Product]
 +get_entries(n_letters): list[Product]
 }
 
